@@ -1,0 +1,16 @@
+1: https://3dsky.org/3dmodels/show/okno_v_klassicheskom_stile_material_temnoe_derevo
+2: Free download
+3: Platform: 3dsMax 2011 + fbx
+Render: Corona
+Size: 3 MB
+Colors: White, Black, Brown
+Style: Classic
+Materials: Wood, Glass
+Published 26 December 2017
+:A window in the classical style. The material is dark wood.
+In the model there is a fragment of the wall with a number of data windows + wall decor.
+Adjusted floor material: dark parquet
+tags:  dark: retro: loft: glazing: frame
+5: Other Models
+6: Windows
+7: A window in the classical style. The material is dark wood.

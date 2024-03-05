@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <link rel="stylesheet" href="style.css">-->
+
+    <style>
+        .main{
+            /*background-color: black;*/
+        }
+
+        .watermarked {
+            position: relative;
+            border-color: red;
+            border-radius: 120px;
+        }
+        .watermarked:after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            background-image: url("/home/suren/Projects/upwork/maroz/parser_and_search/resources/logo.jpg");
+            /*background-size: 100px 100px;*/
+            background-size:130px 50px;
+            background-position: 25% 97%;
+            background-repeat: no-repeat;
+            opacity: 0.6;
+        }
+
+    </style>
+
+    <script >
+
+    </script>
+</head>
+<body>
+    <div class="main">
+        <div class="watermarked">
+            <img src="https://b6.3ddd.ru/media/cache/tuk_model_custom_filter_ang_en/model_images/0000/0000/5690/5690009.650df034eb9dc.jpeg" width="300px" height="300px" alt="Photo">
+        </div>
+
+    </div>
+</body>
+</html>

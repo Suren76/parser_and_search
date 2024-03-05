@@ -1,0 +1,15 @@
+1: https://3dsky.org/3dmodels/show/doors_millenium_papa_carlo_ukraine
+2: Free download
+3: Platform: 3dsMax 2010 + fbx
+Render: Vray
+Size: 6 MB
+Colors: Brown
+Style: Modern
+Materials: Wood, Glass
+Published 20 August 2012
+:Exact door models of "Papa Karlo". Millenium Series.
+The doors were modeled on technical drawings. Just a series of 14 doors.
+tags:  papa carlo: doors: interior
+5: Other Models
+6: Doors
+7: Doors Millenium (Papa-Carlo) Ukraine

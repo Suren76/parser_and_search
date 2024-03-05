@@ -1,0 +1,14 @@
+1: https://3dsky.org/3dmodels/show/bang_olufsen_beolab_90
+2: Free download
+3: Platform: 3dsMax 2014 + fbx
+Render: Vray
+Size: 19 MB
+Colors: Gray, Black, Orange
+Style: Modern
+Materials: Metal, Wood
+Published 25 April 2016
+:The new BeoLab 90 loudspeaker from Bang &amp; Olufsen.
+tags:  bang: olufsen: beolab: loudspeakers: column: speaker: acoustics
+5: Technology
+6: Audio tech
+7: Bang &amp; Olufsen - BeoLab 90

@@ -1,0 +1,15 @@
+1: https://3dsky.org/3dmodels/show/amerikanskii_tip_plastikovykh_okon
+2: Free download
+3: Platform: 3dsMax 2014 + obj
+Render: Vray
+Size: 33 MB
+Colors: White, Brown
+Style: Classic
+Materials: Wood, Glass
+Published 12 October 2017
+:There are 6 different types of windows in the archive in 3 colors.
+American windows are also English. This design is called the "Birdical Slider". English windows have two flaps that move vertically independently of each other, using compensators that allow the flap to be locked in the desired position, and also provide ease of sliding along the frame.
+tags:  double-glazed: glazing: balcony: door: plastic: slider
+5: Other Models
+6: Windows
+7: American type of plastic windows

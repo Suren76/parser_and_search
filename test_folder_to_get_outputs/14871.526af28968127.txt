@@ -1,0 +1,14 @@
+1: https://3dsky.org/3dmodels/show/sierviz_13
+2: Free download
+3: Platform: 3dsMax 2009 and below
+Render: Vray
+Size: 14 MB
+Colors: White, Gray, Blue
+Style: Ethnic
+Materials: Glass
+Published 15 January 2012
+:Service
+tags:  gzhel: service
+5: Kitchen
+6: Tableware
+7: Service
