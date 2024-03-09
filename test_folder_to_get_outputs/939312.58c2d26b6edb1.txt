@@ -1,0 +1,14 @@
+1: https://3dsky.org/3dmodels/show/flowos
+2: Free download
+3: Platform: 3dsMax 2014 + fbx
+Render: Corona
+Size: 9 MB
+Colors: Gray
+Style: Modern
+Materials: Stone
+Published 10 March 2017
+:Modular concrete tiles. Smooth and embossed versions. Buy at: www.plitos.com
+tags:  flowos: plitos: inlab: tile
+5: Decoration
+6: 3D panel
+7: FlowOs

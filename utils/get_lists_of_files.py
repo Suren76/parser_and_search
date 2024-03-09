@@ -36,8 +36,8 @@ def get_files_formatted_dict(_path_to_archives: Path):
 
     for _item in _files_list:
         filenames_list[Path(_item).stem][
-            "archive" if "zip" in _item or "rar" in _item or "7z" in _item else
-            "image" if "jpeg" in _item or "jpg" in _item or "png" in _item else
+            "archive" if ".zip" in _item or ".rar" in _item or ".7z" in _item else
+            "image" if ".jpeg" in _item or ".jpg" in _item or ".png" in _item else
             "unknown"
         ].append(_item)
 
@@ -111,15 +111,15 @@ def get_excluded_files_list(_path_to_archives: Path, _list_of_values_to_exclude:
 
     for _item in second_phase:
         filenames_list[Path(_item).stem][
-            "archive" if "zip" in _item or "rar" in _item or "7z" in _item else
-            "image" if "jpeg" in _item or "jpg" in _item or "png" in _item else
+            "archive" if ".zip" in _item or ".rar" in _item or ".7z" in _item else
+            "image" if ".jpeg" in _item or ".jpg" in _item or ".png" in _item else
             "unknown"
         ].append(_item)
 
     return filenames_list
 
 
-def get_list_of_files_with_name_found_one_result(_list_of_files: dict, path_to_save: object) -> object:
+def get_list_of_files_with_name_found_one_result(_list_of_files: dict, path_to_save: str | Path):
     _list_of_models = {}
 
     for _text_to_search in _list_of_files:

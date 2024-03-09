@@ -8,7 +8,7 @@ from search.archives.SevenZipImplementation import SevenZipImplementation
 class FileNotArchive(Exception):pass
 
 
-def _get_id_from_archive(path_to_archive: str | PathLike) -> str| list | None:
+def _get_id_from_archive(path_to_archive: str | PathLike) -> str | list | None:
     __SUPPORTED_ARCHIVES_LIST = ["zip", "rar", "7z"]
 
     if ".zip" in str(path_to_archive):

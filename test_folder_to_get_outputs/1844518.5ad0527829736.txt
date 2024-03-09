@@ -1,0 +1,17 @@
+1: https://3dsky.org/3dmodels/show/kukhonnaia_tekhnika_kuppersberg_1
+2: Free download
+3: Platform: 3dsMax 2009 and below
+Render: Vray
+Size: 56 MB
+Colors: Black
+Style: Classic
+Materials: Metal, Glass
+Published 13 April 2018
+:Kitchen appliances Kuppersberg <br/><br/> in the set: <br/><br/> Extractor hood - Kuppersberg BONA 60 C Bronze
+Gas panel - Kuppersberg FQ663 B
+Microwave oven - Kuppersberg RMW 393 B
+Oven - Kuppersberg SR 663 B <br/><br/> Also in the archive there is a collected scene, shown in the main preview. <br/><br/> files are saved in the format max2009, vray 2.10 <br/><br/> on the panel and oven is anti-aliasing x2, on the microwave x3, hood without anti-aliasing.
+tags:  kitchen: cooker hood: cooking: extractor: oven: electric: hob: appliance: kuppersberg: exhaust: gas panel: panel: microwave oven: microwave: the black: black: glass: ventilation
+5: Kitchen
+6: Kitchen appliance
+7: Kitchen appliances Kuppersberg

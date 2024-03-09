@@ -1,0 +1,17 @@
+1: https://3dsky.org/3dmodels/show/milanor
+2: Free download
+3: Platform: 3dsMax 2010 + obj
+Render: Vray
+Size: 44 MB
+Colors: White, Beige
+Style: Classic
+Materials: Wood, Fabric
+Published 17 February 2012
+:Textures
+Wrap
+Shading
+Polys ~ 650000
+tags: 
+5: Furniture
+6: Bed
+7: Milanor

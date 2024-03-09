@@ -1,0 +1,20 @@
+1: https://3dsky.org/3dmodels/show/abs_house_v112
+2: Free download
+3: Platform: 3dsMax 2014 + fbx
+Render: Vray
+Size: 79 MB
+Colors: Black, Brown, Beige
+Style: Modern
+Materials: Stone, Brick
+Published 16 October 2017
+:Individual project of a private house.
+Three options for finishing the facade.
+Textures in the archive.
+Materials are set up.
+I hope it will be useful for your projects.
+3ds max 2014 in the archive.
+V-ray 2.40
+tags:  house: structure: log house: wood: rock
+5: Architecture
+6: Building
+7: ABS House V112

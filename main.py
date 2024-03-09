@@ -9,10 +9,17 @@ from parse_file_formats.parse_file_formats import get_textfile
 from utils.get_lists_of_files import _get_list_of_files_with_index_as_name, get_excluded_files_list, \
     get_list_of_archives_containing_indexes, get_list_of_files_with_name_found_one_result, get_files_formatted_dict
 from utils.utils import textfile_by_id, remove_file_extension
+from utils.download_image_by_id import download_image_by_id
 from tqdm import tqdm
+import shutil
 
 
-def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_directory: Path | str = config.PATH_TO_OUTPUT_DIRECTORY):
+def get_text_files_from_path(
+        _path_to_archives: Path | str,
+        _path_to_save_directory: Path | str = config.PATH_TO_OUTPUT_DIRECTORY,
+        _to_download_image: bool = False,
+        _to_move_archives : bool = False
+):
     path_to_archives = Path(_path_to_archives)
     path_to_save_directory = Path(_path_to_save_directory)
 
@@ -30,6 +37,18 @@ def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_direct
         try:
             textfile_by_id(_to_search_key, path_to_save_directory)
             files_dict[_to_search_key]["status"] = True
+
+            if _to_move_archives:
+                archive_path = (Path(files_dict[_to_search_key]["path"]) / Path(files_dict[_to_search_key]["archive"][0])
+                               .rename(f"{_to_search_key}.{Path(files_dict[_to_search_key]['path']).suffix}"))
+                shutil.move(archive_path, path_to_save_directory)
+
+            if len(files_dict[_to_search_key]["image"]) == 0 and _to_download_image:
+                download_image_by_id(_to_search_key, path_to_save_directory)
+            else:
+                image_path = (Path(files_dict[_to_search_key]["path"]) / Path(files_dict[_to_search_key]["image"][0])
+                        .rename(f"{_to_search_key}.{Path(files_dict[_to_search_key]['path']).suffix}"))
+                shutil.move(image_path, path_to_save_directory)
         except Exception as e:
             files_dict[_to_search_key]["fails"]["id_as_name"].append(str(e))
 
@@ -46,6 +65,18 @@ def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_direct
         try:
             textfile_by_id(remove_file_extension(list_of_archive_with_indexes[item]), path_to_save_directory)
             files_dict[item]["status"] = True
+
+            if _to_move_archives:
+                archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+                               .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                shutil.move(archive_path, path_to_save_directory)
+
+            if len(files_dict[item]["image"]) == 0 and _to_download_image:
+                download_image_by_id(list_of_archive_with_indexes[item], path_to_save_directory)
+            else:
+                image_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
+                              .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                shutil.move(image_path, path_to_save_directory)
         except Exception as e:
             files_dict[item]["fails"]["id_from_archive"].append(str(e))
             files_dict[item]["fails"]["id_from_archive"].append(str(item))
@@ -69,6 +100,19 @@ def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_direct
         try:
             textfile_by_id(list_of_files_by_text_with_one_found_result[item], path_to_save_directory)
             files_dict[item]["status"] = True
+
+            if _to_move_archives:
+                archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+                               .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                shutil.move(archive_path, path_to_save_directory)
+
+            if len(files_dict[item]["image"]) == 0 and _to_download_image:
+                download_image_by_id(list_of_files_by_text_with_one_found_result[item], path_to_save_directory)
+            else:
+                image_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
+                              .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                shutil.move(image_path, path_to_save_directory)
+
         except Exception as e:
             files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(e))
             files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(item))
@@ -93,6 +137,10 @@ def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_direct
         # print(text_to_search)
         _models: SearchModelData = API().search_models(text_to_search)
 
+        if len(list_of_files_excluded_both_ids[text_to_search]["image"]) == 0:
+            files_dict[text_to_search]["fails"]["from_text_filter_by_images"].append("there are no image with current name")
+            _final_phase[text_to_search] = list_of_files_excluded_both_ids[text_to_search]
+            continue
 
         if _models == "too big search result":
             files_dict[text_to_search]["fails"]["from_text_filter_by_images"].append(str(_models))
@@ -112,17 +160,26 @@ def get_text_files_from_path(_path_to_archives: Path | str, _path_to_save_direct
         # print(text_to_search)
         # print(list_of_files_excluded_both_ids[text_to_search]["path"])
 
-        if len(list_of_files_excluded_both_ids[text_to_search]["image"]) == 0:
-            files_dict[text_to_search]["fails"]["from_text_filter_by_images"].append("there are no image with current name")
-            _final_phase[text_to_search] = list_of_files_excluded_both_ids[text_to_search]
-            continue
-
         # print(list_of_files_excluded_both_ids[text_to_search]["image"][0])
 
         try:
+            # print(list_of_files_excluded_both_ids[text_to_search])
             filtered_models = _models.get_model_by_image(
                 Path(list_of_files_excluded_both_ids[text_to_search]["path"]) / list_of_files_excluded_both_ids[text_to_search]["image"][0]
             )
+            # if len(list_of_files_excluded_both_ids[text_to_search]["image"]) == 0 and _to_download_image:
+            #     download_image_by_id(filtered_models[0].get_id())
+
+            if _to_move_archives:
+                archve_path = (Path(files_dict[text_to_search]["path"]) / Path(files_dict[text_to_search]["archive"][0])
+                               .rename(f"{text_to_search}.{Path(files_dict[text_to_search]['path']).suffix}"))
+                shutil.move(archve_path, path_to_save_directory)
+
+            if _to_download_image:
+                image_path = (Path(files_dict[text_to_search]["path"]) / Path(files_dict[text_to_search]["image"][0])
+                              .rename(f"{text_to_search}.{Path(files_dict[text_to_search]['path']).suffix}"))
+                shutil.move(image_path, path_to_save_directory)
+
         except Exception as e:
             # print(e)
             files_dict[text_to_search]["fails"]["from_text_filter_by_images"].append(str(e))

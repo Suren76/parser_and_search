@@ -1,0 +1,14 @@
+1: https://3dsky.org/3dmodels/show/minotti_albers_depth
+2: Free download
+3: Platform: 3dsMax 2011 + fbx
+Render: Vray
+Size: 17 MB
+Colors: Gray
+Style: Modern
+Materials: Fabric
+Published 20 April 2013
+:Minotti Albers Depth
+tags:  minotti albers depth
+5: Furniture
+6: Sofa
+7: Minotti Albers Depth

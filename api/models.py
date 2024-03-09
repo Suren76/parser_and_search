@@ -196,7 +196,7 @@ class SearchModelData(BaseModel):
         if _filter == "id":
             return [model for model in self.models if model.get_id() == option]
 
-    def get_model_by_image(self, _image_on_local):
+    def get_model_by_image(self, _image_on_local) -> list[SearchModel]:
         for model in self.models:
             for image in model.get_images():
                 if compare_images(ImageToCompare("web", get_image_url(image)), ImageToCompare("local", _image_on_local)):
