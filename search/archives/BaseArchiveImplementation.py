@@ -1,4 +1,7 @@
+import re
+
 class BaseArchiveImplementation:
+    _re: re = __import__("re")
     _path: str
 
     def __init__(self, path):
@@ -11,6 +14,7 @@ class BaseArchiveImplementation:
             for _filename in self._get_images_of_archive()
 
             if _filename.count(".") == 2
+            if self._re.match("\d+.\w+.", _filename) is not None
         ]
 
     def _get_images_of_archive(self):

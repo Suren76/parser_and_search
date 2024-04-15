@@ -40,6 +40,10 @@ def remove_file_extension(filename: str):
     return Path(filename).stem
 
 
+def remove_scopes(text: str):
+    start_index = text.find("(")
+    end_index = text.find(")")+1
+    return text.replace(text[start_index:end_index], "")
 
 
 

@@ -105,7 +105,26 @@ class ModelDescriptionResponse(BaseResponseModel):
 
     @property
     def get_subcategory(self) -> str:
-        return str(self.data.subcategory["title_en"]) if self.data.subcategory is not None else ""
+        _subcategory: str = str(self.data.subcategory["title_en"])
+
+        if _subcategory == "Miscellaneous":
+            if self.get_category == "Childroom":
+                _subcategory += " 1"
+            if self.get_category == "Materials":
+                _subcategory += " 2"
+            if self.get_category == "Other Models":
+                _subcategory += " 3"
+            if self.get_category == "Technology":
+                _subcategory += " 4"
+        if (
+                self.get_category == "Furniture" and _subcategory == "Table + Chair" or
+                self.get_category == "Childroom" and _subcategory == "Bed" or
+                self.get_category == "Kitchen" and _subcategory == "Faucet" or
+                self.get_category == "Architecture" and _subcategory == "Other"
+        ):
+            _subcategory += " 1"
+
+        return _subcategory if self.data.subcategory is not None else ""
 
     @property
     def get_title(self) -> str:
@@ -196,10 +215,17 @@ class SearchModelData(BaseModel):
         if _filter == "id":
             return [model for model in self.models if model.get_id() == option]
 
-    def get_model_by_image(self, _image_on_local) -> list[SearchModel]:
+    def get_model_by_image(self, _image_on_local, _request_timeout: int, _debug: bool) -> list[SearchModel]:
+        if _debug: print(f"\n {str(_image_on_local)=} ")
         for model in self.models:
+            if _debug: print(f"{self.models.index(model)=}, {len(model.get_images())=}")
             for image in model.get_images():
-                if compare_images(ImageToCompare("web", get_image_url(image)), ImageToCompare("local", _image_on_local)):
+                if compare_images(
+                        ImageToCompare("web", get_image_url(image)),
+                        ImageToCompare("local", _image_on_local),
+
+                        _debug=_debug, _timeout=_request_timeout
+                ):
                     return [model]
         return []
 
@@ -208,3 +234,31 @@ class SearchResponse(BaseResponseModel):
     data: SearchModelData
 
 
+class UserData(BaseModel):
+    menu_events: dict
+    user_rating: dict
+    is_profile_account: bool
+    user: dict | None
+    defaultAvatar: str
+    cookie_banner: None
+    backends: list[str]
+    is_contest: bool
+    menu: dict
+
+
+class UserDataResponse(BaseResponseModel):
+    data: UserData
+
+
+class ImageSearchData(BaseModel):
+    similarity_score: float
+    url: str
+    category: str
+    slug: str
+
+
+class ImageSearchResponse(BaseModel):
+    success: bool
+    search_result: list[ImageSearchData]
+    error: list | None = None
+    message: str

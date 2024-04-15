@@ -4,6 +4,7 @@ from typing import Literal, NamedTuple
 import cv2
 import numpy as np
 import requests
+from pathlib import Path
 
 import config
 from config import PATH_TO_RESOURCES_DIRECTORY
@@ -11,13 +12,24 @@ from config import PATH_TO_RESOURCES_DIRECTORY
 
 class ImageToCompare(NamedTuple):
     image_source_type: Literal["web", "local"]
-    src: str
+    src: str | Path
+
+    # trash hardcode bad position
+    timeout_for_request: int = 3
+
+    @property
+    def timeout(self):
+        return self.timeout_for_request
+
+    @timeout.setter
+    def timeout(self, _new_timeout):
+        self.timeout_for_request = _new_timeout
 
     def get_image_as_cv_format(self) -> cv2.typing.MatLike:
         if self.image_source_type == "web":
             _image = cv2.imdecode(
                 np.asarray(
-                    bytearray(requests.get(str(self.src)).content),
+                    bytearray(requests.get(str(self.src), timeout=self.timeout_for_request).content),
                     np.uint8
                 ),
                 cv2.IMREAD_COLOR
@@ -46,7 +58,7 @@ class ImageToCompare(NamedTuple):
         err /= float(image_a.shape[0] * image_a.shape[1])
         mse = ((image_a.astype("float") - image_b.astype("float")) ** 2).mean()
         return {
-            "equals": True if 0 <= int(err) <= 1 * diff_in_percentage and 0 <= int(mse) <= (1 * diff_in_percentage)/3 else False,
+            "equals": True if 0 <= int(err) <= 5 * diff_in_percentage and 0 <= int(mse) <= (5 * diff_in_percentage)/3 else False,
             "diff": {
                 "err": err,
                 "mse": mse
@@ -54,34 +66,41 @@ class ImageToCompare(NamedTuple):
         }
 
 
-def compare_images(imageA: ImageToCompare, imageB: ImageToCompare):
-    res = ImageToCompare.compare_images(
+def compare_images(imageA: ImageToCompare, imageB: ImageToCompare, _debug: bool, _timeout: int) -> bool:
+    _image_to_compare = ImageToCompare
+    _image_to_compare.timeout_for_request = _timeout
+
+    res = _image_to_compare.compare_images(
         imageA.get_image_as_cv_format(),
         imageB.get_image_as_cv_format()
     )
 
     # time.sleep(2)
-
-    # print("-----"*25)
-    # print(f"{imageA=}")
-    # print(f"{imageB=}")
-    # print(res)
-    # print("-----"*25)
+    if _debug:
+        print("-----"*25)
+        print(f"{imageA=}")
+        print(f"{imageB=}")
+        print(res)
+        print("-----"*25)
 
     return res.get("equals")
 
 
 
 if __name__ == "__main__":
-    print(compare_images(
-        ImageToCompare(image_source_type="local", src=PATH_TO_RESOURCES_DIRECTORY/'test_data/Suren 2/Kitchen Appliances Kuppersberg.jpg'),
-        # ImageToCompare(image_source_type="local", src=PATH_TO_RESOURCES_DIRECTORY/'test_data/Suren 2/Kitchen Appliances Kuppersberg.jpg'),
-        ImageToCompare("web", "https://b6.3ddd.ru/media/cache/tuk_model_custom_filter_ang_en/model_images/0000/0000/1844/1844518.5ad0527829736.jpeg"),
-    ))
-#     # '/home/suren/Projects/upwork/maroz/parser_and_search/resources/S',
-#     Path('/home/suren/Projects/upwork/maroz/parser_and_search/resources/2360.526844c5ac4c/2360.526844c5ac4c1.jpeg'),
-#     # '/home/suren/Projects/upwork/maroz/parser_and_search/resources/2360.526844c5ac4c/2360.526844c5ac4c1.jpeg'
-#     # '/home/suren/Projects/upwork/maroz/parser_and_search/resources/Suren/Bang & Olufsen – BeoLab 90.jpg',
-#     # "https://b5.3ddd.ru/media/cache/tuk_model_custom_filter_ang_en/model_images/0000/0000/0350/350207.55ed1f2ad2b97.jpeg"
-#     "
-#     # '/home/suren/Projects/upwork/maroz/parser_and_search/resources/Suren/Bang & Olufsen – BeoLab 90.jpg'
+    print(
+        compare_images(
+            ImageToCompare(
+                image_source_type="local",
+                src=PATH_TO_RESOURCES_DIRECTORY / "test_data/_image_of_failes" / "Black Timber House.jpg"
+            ),
+            # ImageToCompare(
+            #     image_source_type="local",
+            #     src=PATH_TO_RESOURCES_DIRECTORY / 'test_data/Suren 2/Kitchen Appliances Kuppersberg.jpg'
+            # ),
+            ImageToCompare(
+                "web",
+                "https://b6.3ddd.ru/media/cache/sky_model_new_big_ang_en/model_images/0000/0000/0484/484442.56d2a07a64964.jpeg"
+            ),
+        )
+    )

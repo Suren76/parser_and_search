@@ -21,7 +21,7 @@ def _parse_to_textfile(
     # url_to_image: str
 ):
     _url_of_model = url_of_model
-    _account_type = "Buy accesses" if account_type == 2 else "Free download"
+    _account_type = "Buy accesses" if account_type == "Pro" else "Free download" if account_type == "Free" else "Unknown"
     _platform = platform
     _render = render
     _size = size
