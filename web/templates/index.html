@@ -2,9 +2,92 @@
 
 
 {% block headTitle %}
-bbbbbfg_title
+statistic view page
 {% endblock %}
 
 {% block main %}
-fgndbbbbbbbbbbbbbbbbbbbbbfg
+
+<style>
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+</style>
+
+<script !src="">
+    function showHideContent(element){
+        // console.log(element);
+        // const button = element.getElementsByClassName("parsed-item-card-button")[0];
+        // button.textContent = button.textContent === 'show'? 'hide': 'show';
+        // button.style.display =
+        //     button.textContent === 'hide'? 'none': 'block';
+
+        const button_icon = element.getElementsByTagName("i")[0]
+        button_icon.className = button_icon.className==="arrow up"? "arrow down": "arrow up"
+        // console.log(button_icon)
+
+        let parsedItemCardContent = element.getElementsByClassName("parsed-item-card-content")[0]
+        parsedItemCardContent.style.display =
+            parsedItemCardContent.style.display === 'block' || parsedItemCardContent.style.display === ''? 'none': 'block';
+    }
+</script>
+
+<div class="statistic">
+    <div class="col-3 p-3 card">
+        {{ ((list_of_results.values() |  selectattr('status', '==', False)) | list).__len__()  }} / {{list_of_results.__len__()}}
+
+    </div>
+</div>
+<div class="row m-3"></div>
+
+<ul>
+    {% for item in list_of_results %}
+    <li class="parsed-item-card p-1 card border-0" onclick="showHideContent(this)">
+        <h3 style="color:
+            {% if list_of_results[item]['status'] %}{{'green'}}
+            {% else %}{{'red'}}{% endif %}
+        ">
+            {{ item }}
+
+            <a class="btn">
+                <i class="arrow down "></i>
+            </a>
+
+        </h3>
+
+        <div class="parsed-item-card-content" style="display: none;">
+            <div class="parsed-item-card-image">
+                <label>{{'image'}}:</label><span>  {{list_of_results[item]['image']}}  </span>
+            </div>
+            <div class="parsed-item-card-archive">
+                <label>{{'archive'}}:</label><span>  {{list_of_results[item]['archive']}}  </span>
+            </div>
+            <div class="parsed-item-card-unknown">
+                <label>{{'unknown'}}:</label><span>  {{list_of_results[item]['unknown']}}  </span>
+            </div>
+            <div class="parsed-item-card-meta">
+                <label>{{'meta'}}:</label><span>  {{list_of_results[item]['meta']}}  </span>
+            </div>
+            <div class="parsed-item-card-path">
+                <label>{{'path'}}:</label><span>  {{list_of_results[item]['path']}}  </span>
+            </div>
+            <div class="parsed-item-card-fails">
+                <label>{{'fails'}}:</label><span>  {{list_of_results[item]['fails']}}  </span>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

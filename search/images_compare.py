@@ -58,7 +58,7 @@ class ImageToCompare(NamedTuple):
         err /= float(image_a.shape[0] * image_a.shape[1])
         mse = ((image_a.astype("float") - image_b.astype("float")) ** 2).mean()
         return {
-            "equals": True if 0 <= int(err) <= 5 * diff_in_percentage and 0 <= int(mse) <= (5 * diff_in_percentage)/3 else False,
+            "equals": True if 0 <= int(err) <= 1 * diff_in_percentage and 0 <= int(mse) <= (1 * diff_in_percentage)/3 else False,
             "diff": {
                 "err": err,
                 "mse": mse

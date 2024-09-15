@@ -14,7 +14,7 @@ class BaseArchiveImplementation:
             for _filename in self._get_images_of_archive()
 
             if _filename.count(".") == 2
-            if self._re.match("\d+.\w+.", _filename) is not None
+            if self._re.match("\d{7}.[a-z\d]{13}.", _filename) is not None
         ]
 
     def _get_images_of_archive(self):

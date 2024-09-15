@@ -1,9 +1,9 @@
 FROM python:3.11-slim
 ADD . /project
-RUN pip3 install -r /project/requirements.txt
-RUN apt-get update && apt-get install libgl1 -y
-RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6
-RUN apt-get install -y libmagic1
+RUN pip3 install docker
+RUN #apt-get update && apt-get install libgl1 -y
+#RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6
+#RUN apt-get install -y libmagic1
 
 
 

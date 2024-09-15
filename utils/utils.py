@@ -10,12 +10,24 @@ from search.search_on_web import get_slug_of_model_by_text
 def textfile_by_id(_id: str, path_to_save: Path = config.PATH_TO_OUTPUT_DIRECTORY) -> object:
     _text = _id
     # print(f"--------------- {_text=} ---------------")
-    data = get_textfile(get_slug_of_model_by_text(_text))
-    # _id = API().get_id_of_model_by_slug(get_slug_of_model_by_text(_text))
-    (
-        open(path_to_save / f"{_text}.txt", "w+")
-        .write(data)
-    )
+    data = get_slug_of_model_by_text(_text)
+
+    if type(data) is str:
+        data_to_write_in_file = get_textfile(data)
+
+        # _id = API().get_id_of_model_by_slug(get_slug_of_model_by_text(_text))
+        (
+            open(path_to_save / f"{_text}.txt", "w+")
+            .write(data_to_write_in_file)
+        )
+        return
+    elif type(data) is dict:
+        exception = Exception("invalid slug or invalid response")
+        exception.add_note(f"{data=}")
+        exception.add_note(f"meta: ({_id=}, )")
+
+        raise exception
+
 
 # def _textfile_by_text(_text: str):
 #     print(_text)

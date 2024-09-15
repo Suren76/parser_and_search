@@ -4,6 +4,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
 
+from tqdm import tqdm
+
 from search.images_compare import compare_images, ImageToCompare
 from tools import get_image_url
 
@@ -11,7 +13,7 @@ from tools import get_image_url
 class BaseResponseModel(BaseModel):
     status: int
     message: str
-    data: BaseModel
+    data: BaseModel | None
 
 
 class ModelDescriptionData(BaseModel):
@@ -47,9 +49,9 @@ class ModelDescriptionData(BaseModel):
 
 class ModelDescriptionResponse(BaseResponseModel):
     success: bool
-    data: ModelDescriptionData
+    data: ModelDescriptionData | None
     error: list | None = None
-    cache: bool
+    cache: bool | None = None
 
     @property
     def get_url_of_model(self) -> str:
@@ -217,7 +219,8 @@ class SearchModelData(BaseModel):
 
     def get_model_by_image(self, _image_on_local, _request_timeout: int, _debug: bool) -> list[SearchModel]:
         if _debug: print(f"\n {str(_image_on_local)=} ")
-        for model in self.models:
+        for model in (pbar := tqdm(self.models, desc=f"--- {'filter images phase'} ", leave=False)):
+            # pbar.set_description(f"--- {'filter images phase'} | [" + f"index={self.models.index(model)}, images_len={len(model.get_images())}]")
             if _debug: print(f"{self.models.index(model)=}, {len(model.get_images())=}")
             for image in model.get_images():
                 if compare_images(
@@ -235,12 +238,12 @@ class SearchResponse(BaseResponseModel):
 
 
 class UserData(BaseModel):
-    menu_events: dict
-    user_rating: dict
-    is_profile_account: bool
+    menu_events: dict = None
+    user_rating: dict = None
+    is_profile_account: bool = None
     user: dict | None
     defaultAvatar: str
-    cookie_banner: None
+    cookie_banner: dict | None
     backends: list[str]
     is_contest: bool
     menu: dict
@@ -262,3 +265,7 @@ class ImageSearchResponse(BaseModel):
     search_result: list[ImageSearchData]
     error: list | None = None
     message: str
+
+    @property
+    def slugs_list(self) -> list[str] :
+        return [model.slug for model in self.search_result]

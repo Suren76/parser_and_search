@@ -1,21 +1,24 @@
 from os import PathLike
 
+import magic
+
 from search.archives.RarImplementation import RarImplementation
 from search.archives.ZipImplementation import ZipImplementation
 from search.archives.SevenZipImplementation import SevenZipImplementation
 
 
-class FileNotArchive(Exception):pass
+class FileNotArchive(Exception): pass
 
 
 def _get_id_from_archive(path_to_archive: str | PathLike) -> str | list | None:
     __SUPPORTED_ARCHIVES_LIST = ["zip", "rar", "7z"]
+    _file_type = magic.from_file(path_to_archive, mime=True).strip("/")
 
-    if ".zip" in str(path_to_archive):
+    if "zip" in _file_type:
         _archive = ZipImplementation(path_to_archive)
-    elif ".rar" in str(path_to_archive):
+    elif "rar" in _file_type:
         _archive = RarImplementation(path_to_archive)
-    elif ".7z" in str(path_to_archive):
+    elif "7z" in _file_type:
         _archive = SevenZipImplementation(path_to_archive)
     else:
         raise FileNotArchive((
