@@ -89,6 +89,73 @@ def get_text_files_from_path(
     # print(f"{files_dict=}")
 
 
+    list_of_files_found_by_native_image_search_result = get_list_of_files_with_founded_by_image_result(
+        files_dict, path_to_save_directory, _debug
+    )
+
+    native_image_search_status = False
+    try:
+        # print("try start")
+        for item in (_pbar := tqdm(list_of_files_found_by_native_image_search_result, desc="native_image_search phase", leave=True)):
+            _pbar.set_description(f"{'native_image_search phase'} | filename: [{item}]")
+            try:
+                if len(files_dict[item]["archive"]) == 0:
+                    # print("archive")
+                    files_dict[item]["fails"]["native_image_search"].append("there are no archive with current name")
+                    # _final_phase[item] = list_of_files_excluded_both_ids[item]
+                    continue
+
+                if len(files_dict[item]["image"]) == 0:
+                    files_dict[item]["fails"]["native_image_search"].append("there are no image with current name")
+                    continue
+
+                if not _is_archive_valid(Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])):
+                    continue
+
+                if type(list_of_files_found_by_native_image_search_result[item]) is dict and list_of_files_found_by_native_image_search_result[item].get("to_exclude") is not None:
+                    print(list_of_files_found_by_native_image_search_result[item])
+                    print(item)
+                    continue
+
+                _id_from_native_image_found: str = list_of_files_found_by_native_image_search_result[item]
+
+                # print(_id_from_native_image_found)
+
+                textfile_by_id(_id_from_native_image_found, path_to_save_directory)
+                files_dict[item]["status"] = True
+
+                if _to_move_archives:
+                    # archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+                    #                .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                    # shutil.move(archive_path, path_to_save_directory)
+                    archive_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+
+                    _new_archive_path = Path(archive_path.parent, f"{_id_from_native_image_found}{Path(files_dict[item]['archive'][0]).suffix}")
+                    archive_path.rename(_new_archive_path)
+                    archive_path = _new_archive_path
+
+                    if not os.path.exists(Path(path_to_save_directory / archive_path.name)):
+                        shutil.move(archive_path, path_to_save_directory)
+                    else:
+                        os.remove(archive_path)
+                if _to_download_image:
+                    if not os.path.exists(path_to_save_directory / Path(_id_from_native_image_found + ".jpg")):
+                        download_image_by_id(_id_from_native_image_found, path_to_save_directory)
+            except Exception as e:
+                files_dict[item]["fails"]["native_image_search"].append(str(e))
+                files_dict[item]["fails"]["native_image_search"].append(str(item))
+                # print(item)
+                # print(e)
+        if API().is_image_server_alive():
+            native_image_search_status = True
+    except Exception as e:
+        # if not API().is_image_server_alive():
+        print("\n native image search fails, maybe image server is down")
+        raise
+            # native_image_search_status = False
+
+
+
     # print("id phase")
     # print("id_as_name phase start")
     ids_list = _get_list_of_files_with_index_as_name(path_to_archives, _debug)
@@ -223,78 +290,78 @@ def get_text_files_from_path(
     # print("model from text")
     # print("text if found one result")
 
-    list_of_files_by_text_with_one_found_result = list_of_files_excluded_both_ids
+    # list_of_files_by_text_with_one_found_result = list_of_files_excluded_both_ids
 
-    # list_of_files_by_text_with_one_found_result = get_list_of_files_with_name_found_one_result(
-    #     list_of_files_excluded_both_ids, path_to_save_directory, _debug
-    # )
-    #
-    # print("\n")
-    # for item in (_pbar := tqdm(list_of_files_by_text_with_one_found_result, desc="from_text if found one result")):
-    #     _pbar.set_description(f"{'from_text if found one result'} | filename: [{item}]")
-    #     try:
-    #         if not _is_archive_valid(Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])):
-    #             continue
-    #
-    #         # print("3rd")
-    #         # print(f"{list_of_files_by_text_with_one_found_result[item]=}")
-    #
-    #         # print(list_of_files_excluded_both_ids[item])
-    #         # print(files_dict[item])
-    #         # if len(files_dict[item]["image"]) == 0:
-    #         #     # print("image")
-    #         #     files_dict[item]["fails"]["from_text_if_found_one_result"].append("there are no image with current name")
-    #         #     # _final_phase[item] = list_of_files_excluded_both_ids[item]
-    #         #     continue
-    #
-    #         if len(files_dict[item]["archive"]) == 0:
-    #             # print("archive")
-    #             files_dict[item]["fails"]["from_text_if_found_one_result"].append("there are no archive with current name")
-    #             # _final_phase[item] = list_of_files_excluded_both_ids[item]
-    #             continue
-    #
-    #
-    #         _id_from_text_solo_found: str = list_of_files_by_text_with_one_found_result[item]
-    #
-    #         textfile_by_id(_id_from_text_solo_found, path_to_save_directory)
-    #         files_dict[item]["status"] = True
-    #
-    #         if _to_move_archives:
-    #             # archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
-    #             #                .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
-    #             # shutil.move(archive_path, path_to_save_directory)
-    #             archive_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
-    #
-    #             _new_archive_path = Path(archive_path.parent, f"{_id_from_text_solo_found}{Path(files_dict[item]['archive'][0]).suffix}")
-    #             archive_path.rename(_new_archive_path)
-    #             archive_path = _new_archive_path
-    #
-    #             if not os.path.exists(Path(path_to_save_directory / archive_path.name)):
-    #                 shutil.move(archive_path, path_to_save_directory)
-    #             else:
-    #                 os.remove(archive_path)
-    #
-    #         if _to_download_image:
-    #             if not os.path.exists(path_to_save_directory / Path(_id_from_text_solo_found + ".jpg")):
-    #                 download_image_by_id(_id_from_text_solo_found, path_to_save_directory)
-    #             # if len(files_dict[item]["image"]) == 0:
-    #             #     pass
-    #             # else:
-    #             #     # image_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
-    #             #     #               .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
-    #             #     # shutil.move(image_path, path_to_save_directory)
-    #             #     image_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
-    #             #     _new_image_path = Path(image_path.parent, f"{_id_from_text_solo_found}{Path(files_dict[item]['image'][0]).suffix}")
-    #             #     image_path.rename(_new_image_path)
-    #             #     image_path = _new_image_path
-    #             #     shutil.move(image_path, path_to_save_directory)
-    #             #     # print("ok")
-    #
-    #     except Exception as e:
-    #         files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(e))
-    #         files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(item))
-    #         # print(item)
-    #         # print(e)
+    list_of_files_by_text_with_one_found_result = get_list_of_files_with_name_found_one_result(
+        list_of_files_excluded_both_ids, path_to_save_directory, _debug
+    )
+
+    print("\n")
+    for item in (_pbar := tqdm(list_of_files_by_text_with_one_found_result, desc="from_text if found one result")):
+        _pbar.set_description(f"{'from_text if found one result'} | filename: [{item}]")
+        try:
+            if not _is_archive_valid(Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])):
+                continue
+
+            # print("3rd")
+            # print(f"{list_of_files_by_text_with_one_found_result[item]=}")
+
+            # print(list_of_files_excluded_both_ids[item])
+            # print(files_dict[item])
+            # if len(files_dict[item]["image"]) == 0:
+            #     # print("image")
+            #     files_dict[item]["fails"]["from_text_if_found_one_result"].append("there are no image with current name")
+            #     # _final_phase[item] = list_of_files_excluded_both_ids[item]
+            #     continue
+
+            if len(files_dict[item]["archive"]) == 0:
+                # print("archive")
+                files_dict[item]["fails"]["from_text_if_found_one_result"].append("there are no archive with current name")
+                # _final_phase[item] = list_of_files_excluded_both_ids[item]
+                continue
+
+
+            _id_from_text_solo_found: str = list_of_files_by_text_with_one_found_result[item]
+
+            textfile_by_id(_id_from_text_solo_found, path_to_save_directory)
+            files_dict[item]["status"] = True
+
+            if _to_move_archives:
+                # archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+                #                .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                # shutil.move(archive_path, path_to_save_directory)
+                archive_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
+
+                _new_archive_path = Path(archive_path.parent, f"{_id_from_text_solo_found}{Path(files_dict[item]['archive'][0]).suffix}")
+                archive_path.rename(_new_archive_path)
+                archive_path = _new_archive_path
+
+                if not os.path.exists(Path(path_to_save_directory / archive_path.name)):
+                    shutil.move(archive_path, path_to_save_directory)
+                else:
+                    os.remove(archive_path)
+
+            if _to_download_image:
+                if not os.path.exists(path_to_save_directory / Path(_id_from_text_solo_found + ".jpg")):
+                    download_image_by_id(_id_from_text_solo_found, path_to_save_directory)
+                # if len(files_dict[item]["image"]) == 0:
+                #     pass
+                # else:
+                #     # image_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
+                #     #               .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
+                #     # shutil.move(image_path, path_to_save_directory)
+                #     image_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
+                #     _new_image_path = Path(image_path.parent, f"{_id_from_text_solo_found}{Path(files_dict[item]['image'][0]).suffix}")
+                #     image_path.rename(_new_image_path)
+                #     image_path = _new_image_path
+                #     shutil.move(image_path, path_to_save_directory)
+                #     # print("ok")
+
+        except Exception as e:
+            files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(e))
+            files_dict[item]["fails"]["from_text_if_found_one_result"].append(str(item))
+            # print(item)
+            # print(e)
 
 
     list_of_files_excluded_both_ids = {
@@ -304,101 +371,12 @@ def get_text_files_from_path(
         if item not in list_of_archive_with_indexes
     }
 
+    list_of_files_excluded_both_ids_and_solo_names = {
+        item: files_dict[item]
 
-    # list_of_files_excluded_both_ids_and_solo_names = {
-    #     item: files_dict[item]
-    #
-    #     for item in files_dict
-    #     if item not in list_of_files_by_text_with_one_found_result
-    # }
-    list_of_files_excluded_both_ids_and_solo_names = list_of_files_by_text_with_one_found_result
-
-    list_of_files_found_by_native_image_search_result = get_list_of_files_with_founded_by_image_result(
-        list_of_files_excluded_both_ids_and_solo_names, path_to_save_directory, _debug
-    )
-
-    native_image_search_status = False
-    try:
-        # print("try start")
-        for item in (_pbar := tqdm(list_of_files_found_by_native_image_search_result, desc="native_image_search phase", leave=True)):
-            _pbar.set_description(f"{'native_image_search phase'} | filename: [{item}]")
-            try:
-                # print("\n 3rd")
-                # print(f"{list_of_files_by_text_with_one_found_result=}")
-                # print(list_of_files_excluded_both_ids[item])
-                # print(files_dict[item])
-                # print(item)
-                # if len(files_dict[item]["image"]) == 0:
-                #     # print("image")
-                #     files_dict[item]["fails"]["from_text_if_found_one_result"].append("there are no image with current name")
-                #     # _final_phase[item] = list_of_files_excluded_both_ids[item]
-                #     continue
-
-                if len(files_dict[item]["archive"]) == 0:
-                    # print("archive")
-                    files_dict[item]["fails"]["native_image_search"].append("there are no archive with current name")
-                    # _final_phase[item] = list_of_files_excluded_both_ids[item]
-                    continue
-
-                if len(files_dict[item]["image"]) == 0:
-                    files_dict[item]["fails"]["native_image_search"].append("there are no image with current name")
-                    continue
-
-                if not _is_archive_valid(Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])):
-                    continue
-
-                if type(list_of_files_found_by_native_image_search_result[item]) is dict and list_of_files_found_by_native_image_search_result[item].get("to_exclude") is not None:
-                    print(list_of_files_found_by_native_image_search_result[item])
-                    print(item)
-                    continue
-
-                _id_from_native_image_found: str = list_of_files_found_by_native_image_search_result[item]
-
-                # print(_id_from_native_image_found)
-
-                textfile_by_id(_id_from_native_image_found, path_to_save_directory)
-                files_dict[item]["status"] = True
-
-                if _to_move_archives:
-                    # archive_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
-                    #                .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
-                    # shutil.move(archive_path, path_to_save_directory)
-                    archive_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["archive"][0])
-
-                    _new_archive_path = Path(archive_path.parent, f"{_id_from_native_image_found}{Path(files_dict[item]['archive'][0]).suffix}")
-                    archive_path.rename(_new_archive_path)
-                    archive_path = _new_archive_path
-
-                    if not os.path.exists(Path(path_to_save_directory / archive_path.name)):
-                        shutil.move(archive_path, path_to_save_directory)
-                    else:
-                        os.remove(archive_path)
-                if _to_download_image:
-                    if not os.path.exists(path_to_save_directory / Path(_id_from_native_image_found + ".jpg")):
-                        download_image_by_id(_id_from_native_image_found, path_to_save_directory)
-                    # if len(files_dict[item]["image"]) == 0:
-                    #     pass
-                    # else:
-                    #     # image_path = (Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
-                    #     #               .rename(f"{item}.{Path(files_dict[item]['path']).suffix}"))
-                    #     # shutil.move(image_path, path_to_save_directory)
-                    #     image_path = Path(files_dict[item]["path"]) / Path(files_dict[item]["image"][0])
-                    #     _new_image_path = Path(image_path.parent, f"{_id_from_text_solo_found}{Path(files_dict[item]['image'][0]).suffix}")
-                    #     image_path.rename(_new_image_path)
-                    #     image_path = _new_image_path
-                    #     shutil.move(image_path, path_to_save_directory)
-                    #     # print("ok")
-            except Exception as e:
-                files_dict[item]["fails"]["native_image_search"].append(str(e))
-                files_dict[item]["fails"]["native_image_search"].append(str(item))
-                # print(item)
-                # print(e)
-        if API().is_image_server_alive():
-            native_image_search_status = True
-    except Exception as e:
-        # if not API().is_image_server_alive():
-        print("\n native image search fails, maybe image server is down")
-            # native_image_search_status = False
+        for item in files_dict
+        if item not in list_of_files_by_text_with_one_found_result
+    }
 
 
     list_of_files_excluded_both_ids_and_solo_names_and_native_image_search_models_to_exclude = {
@@ -476,7 +454,7 @@ def get_text_files_from_path(
             _models = API().search_models(
                 text_to_search,
                 get_random_phpsessid_cookie(list_with_login_datas),
-                _limit_for_result_to_use_in_image_compare
+                _limit=_limit_for_result_to_use_in_image_compare
             )
 
             if len(list_of_files_excluded_both_ids[text_to_search]["image"]) == 0:
